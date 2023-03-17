@@ -1,29 +1,48 @@
-import { FileOutlined, PieChartOutlined, UserOutlined, DesktopOutlined, TeamOutlined } from '@ant-design/icons';
+import { UserOutlined, FileDoneOutlined, CloudUploadOutlined, MessageOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import { useState } from 'react';
 import Perfil from './Pages/Perfil';
+import Cadastro from './Pages/Cadastro';
+import EnviarDocumentos from './Pages/EnviarDocumentos';
+import Logo from './assets/logo.png';
+import { Routes, Route, Link } from 'react-router-dom';
+
 const { Header, Content, Footer, Sider } = Layout;
 
 const items = [
   {
-    label: 'Dashboard',
+    label: (
+      <Link to="/gerenciador_rh/colaborador">
+        Perfil
+      </Link>
+    ),
     key: '1',
-    icon: <PieChartOutlined />,
-  },
-  {
-    label: 'Usuários',
-    key: '2',
     icon: <UserOutlined />,
   },
   {
     label: (
-      <a href="#" target="_blank" rel="noopener noreferrer">
-        Clientes
-      </a>
+      <Link to="/gerenciador_rh/colaborador/cadastro">
+        Cadastro
+      </Link>
+    ),
+    key: '2',
+    icon: <FileDoneOutlined />,
+  },
+  {
+    label: (
+      <Link to="/gerenciador_rh/colaborador/enviar_documentos">
+        Cadastro
+      </Link>
     ),
     key: '3',
-    icon: <DesktopOutlined />,
+    icon: <CloudUploadOutlined />,
   },
+  {
+    label: 'Mensagens',
+    key: '4',
+    icon: <MessageOutlined />,
+  },
+
  
 ];
 const App = () => {
@@ -40,11 +59,16 @@ const App = () => {
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div
           style={{
-            height: 32,
+            height: 'fit-content',
             margin: 16,
-            background: 'rgba(255, 255, 255, 0.2)',
+            background: '#fff',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
-        />
+        >
+          <img src={Logo} alt="" width='75px' />
+          </div>
         <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
         
       </Sider>
@@ -68,7 +92,12 @@ const App = () => {
               background: colorBgContainer,
             }}
           >
-            <Perfil />
+            <Routes>
+              <Route path="/gerenciador_rh/colaborador" element={<Perfil />} />
+              <Route path="/gerenciador_rh/colaborador/cadastro" element={<Cadastro />} />
+
+            </Routes>
+            
           </div>
         </Content>
         <Footer

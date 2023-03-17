@@ -1,44 +1,60 @@
-import { Upload } from 'antd';
-import ImgCrop from 'antd-img-crop';
 import { useState } from 'react';
+import { Upload, message } from 'antd';
+import ImgCrop from 'antd-img-crop';
+
+
+
 const Perfil = () => {
-  const [fileList, setFileList] = useState([
-    // {
-    //   uid: '-1',
-    //   name: 'image.png',
-    //   status: 'done',
-    //   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    // },
-  ]);
-  const onChange = ({ fileList: newFileList }) => {
+  const [fileList, setFileList] = useState([]);
+  const [name, setName] = useState('Gabriel Gomes');
+  const [registration, setRegistration] = useState('1234567');
+  const [cpf, setCpf] = useState('830.290.520-87');
+
+  const handleUploadChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
-  const onPreview = async (file) => {
-    let src = file.url;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
-      });
+
+  const handleUploadBeforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('Você pode apenas fazer upload de imagens JPG/PNG!');
+      return false;
     }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow?.document.write(image.outerHTML);
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('A imagem deve ser menor que 2MB!');
+      return false;
+    }
+    return true;
   };
+
+
+
+  const handleUploadSuccess = (response) => {
+    // Tratar a resposta do backend aqui
+    console.log('Upload bem sucedido!', response);
+  };
+
   return (
-    <ImgCrop rotationSlider>
-      <Upload
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-        listType="picture-card"
-        fileList={fileList}
-        onChange={onChange}
-        onPreview={onPreview}
-      >
-        {fileList.length < 5 && '+ Upload'}
-      </Upload>
-    </ImgCrop>
+    <div>
+      <ImgCrop>
+        <Upload
+          listType="picture-card"
+          fileList={fileList}
+          onChange={handleUploadChange}
+          beforeUpload={handleUploadBeforeUpload}
+          action="http://localhost:8000/api/upload" // Substituir pela url do backend
+          method="POST"
+          onSuccess={handleUploadSuccess}
+        >
+          {fileList.length === 0 ? 'Adicionar Foto' : null}
+        </Upload>
+      </ImgCrop>      
+      <p>Nome: {name}</p>
+      <p>Matrícula: {registration}</p>
+      <p>CPF: {cpf}</p>
+    </div>
   );
 };
+
 export default Perfil;
